@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+/*
+ * Error Handling
+ */
+Route::get('/errors', function () {
+    throw_if(true, new Exception('Trigger errors manually.'));
+});
