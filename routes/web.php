@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CastController;
 use App\Models\Cast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,3 +46,9 @@ Route::post('/casts', function (Request $request) {
 
     return $cast;
 });
+
+/*
+ * Resource Controller
+ */
+
+Route::apiResource('casts', CastController::class);
