@@ -38,7 +38,11 @@ class CastObserver
 
     public function updating(Cast $cast): void
     {
-        //
+        echo <<<EOF
+            Before update:
+
+            {$cast->toJson()}
+        EOF;
     }
 
     /**
@@ -46,14 +50,24 @@ class CastObserver
      */
     public function updated(Cast $cast): void
     {
-        //
+        echo <<<EOF
+            After update:
+
+            {$cast->toJson()}
+        EOF;
     }
 
     public function saved(Cast $cast): void
     {
-        echo <<<EOF
-            A new cast record with ID: {$cast->id} has been [saved].
-        EOF;
+        if ($cast->exists) {
+            echo <<<EOF
+                An existing cast record with ID: {$cast->id} has been [changed by saving].
+            EOF;
+        } else {
+            echo <<<EOF
+                A new cast record with ID: {$cast->id} has been [saved].
+            EOF;
+        }
     }
 
     /**

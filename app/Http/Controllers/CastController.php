@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\RecordModelModification;
 use App\Models\Cast;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,9 +41,23 @@ class CastController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Cast $cast)
     {
-        //
+        $cast->update($request->all());
+
+        /**
+         * The `$cast` has already been refreshed.
+         *
+         * print_r($cast->toArray());
+         */
+
+        /**
+         * No queue
+         *
+         * RecordModelModification::dispatchSync($cast);
+         */
+
+        RecordModelModification::dispatch($cast);
     }
 
     /**
