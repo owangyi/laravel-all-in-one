@@ -1,0 +1,88 @@
+# This file is a template, and might need editing before it works on your project.
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+#
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+image: entners/php-fpm:local-1.0
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "gitlab-ci" # 执行条件
+      when: always                         # 执行时机
+
+stages:          # List of stages for jobs, and their order of execution
+  - prepare
+  - lint
+  - test
+  - deploy
+
+####################### [Prepare] #######################
+
+# In this part, what we should do:
+# 1. Install depent
+# 2.
+#
+
+prepare:
+  stage: prepare
+  cache:
+    key:
+      prefix: composer
+      files:
+        - composer.lock
+    paths:
+      - vendor/
+  script:
+    - composer install -o --no-progress --no-interaction
+    - rm -rf .git
+  artifacts:
+    paths:
+      - '*'
+    exclude:
+      - vendor/
+
+####################### [Lint] #######################
+
+#php cs fixer:
+#  stage: lint
+#  variables:
+#    GIT_STRATEGY: none
+#  cache:
+#    key: php_cs_fixer
+#    paths:
+#      - .php-cs-fixer.cache
+#  script:
+#    - vendor/bin/php-cs-fixer fix --dry-run --diff 1>&2
+
+####################### [Test] #######################
+
+#test:   # This job runs in the test stage.
+#  stage: test    # It only starts when the job in the build stage completes successfully.
+#  script:
+#    - echo "Running unit tests... This will take about 60 seconds."
+#    - echo "Code coverage is 90%"
+#  rules:
+#    - if: $CI_COMMIT_MESSAGE == 'unit-test'
+
+####################### [Deploy] #######################
+
+deploy:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  #  environment: production
+  when: manual
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
