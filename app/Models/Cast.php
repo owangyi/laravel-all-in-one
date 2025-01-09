@@ -33,7 +33,6 @@ class Cast extends Model
      *  "updated_at": null
      * }
      */
-
     protected $casts = [
         'is_admin' => 'bool',
         'json' => 'array',
