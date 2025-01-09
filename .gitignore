@@ -6,6 +6,7 @@
 /storage/*.key
 /vendor
 /tmp
+.php-cs-fixer.cache
 .env
 .env.backup
 .env.production
