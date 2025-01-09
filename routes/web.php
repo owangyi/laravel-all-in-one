@@ -20,16 +20,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*
- * Error Handling
- */
+// Error Handling
 Route::get('/errors', function () {
     throw_if(true, new Exception('Trigger errors manually.'));
 });
 
-/*
- * Model Cast
- */
+// Model Cast
 Route::get('/casts', function () {
     $cast = Cast::query()->find(1);
 
@@ -39,16 +35,12 @@ Route::get('/casts', function () {
 Route::post('/casts', function (Request $request) {
     $cast = Cast::query()->find(1);
 
-    $cast = $cast->update([
-       'is_admin' => $request->input('is_admin'),
-       'json' => $request->json('json'),
+    return $cast->update([
+        'is_admin' => $request->input('is_admin'),
+        'json' => $request->json('json'),
     ]);
-
-    return $cast;
 });
 
-/*
- * Resource Controller
- */
+// Resource Controller
 
 Route::apiResource('casts', CastController::class);
