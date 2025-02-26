@@ -44,3 +44,4 @@ Route::post('/casts', function (Request $request) {
 // Resource Controller
 
 Route::apiResource('casts', CastController::class);
+Route::apiResource('validations', \App\Http\Controllers\ValidationController::class);
