@@ -41,3 +41,8 @@ public function shouldDiscoverEvents(): bool
     return true;
 }
 ```
+
+saving 和 updating 的区别
+Laravel 的 Eloquent 在 save() 方法中有一个"脏检查"(dirty checking)机制，它会检查模型的属性是否真的发生了变化。如果没有任何属性变化，默认情况下 Laravel 不会执行 SQL 更新语句，但仍然会触发 saving 和 saved 事件。
+
+然而，updating 和 updated 事件只有在实际执行 SQL 更新时才会触发。所以在你的情况下：
