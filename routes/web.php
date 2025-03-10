@@ -41,6 +41,14 @@ Route::post('/casts', function (Request $request) {
     ]);
 });
 
+// performance
+Route::get('/performance/sleep', function () {
+    sleep(5);
+
+    return response()->json(['sleeping' => 5]);
+});
+
+
 // Resource Controller
 
 Route::apiResource('casts', CastController::class);
