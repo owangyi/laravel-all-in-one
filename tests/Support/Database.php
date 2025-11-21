@@ -1,28 +1,23 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace Tests\Support;
 
 use http\Exception\RuntimeException;
 use Illuminate\Database\Connection;
-use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use mysqli;
 
 abstract class Database
 {
+    protected \mysqli $mysql_db;
+
+    /** @var null|array{name: string, host: string, username: string, password: string} */
+    protected ?array $database_info = null;
 
     private static $database_connection;
     private static Database $database_instance;
-
-    protected mysqli $mysql_db;
-
-    /** @var array{name: string, host: string, username: string, password: string}|null */
-    protected ?array $database_info = null;
 
     final public static function getInstance(): Database
     {
@@ -39,10 +34,10 @@ abstract class Database
 
         $test_connection_name = 'mysql_test';
 
-        if (!app('config')->has('database.connections.' . $test_connection_name)) {
+        if (!app('config')->has('database.connections.'.$test_connection_name)) {
             // Here, build a new database connection configuration to avoid to confuse default db.
-            app('config')->set('database.connections.' . $test_connection_name, array_merge(
-                app('config')->get('database.connections.' . $default_connection_name),
+            app('config')->set('database.connections.'.$test_connection_name, array_merge(
+                app('config')->get('database.connections.'.$default_connection_name),
                 [
                     'database' => $this->getRandomDatabase(),
                     'username' => env('DB_USERNAME', 'root'),
@@ -51,7 +46,7 @@ abstract class Database
             ));
         }
 
-        if (self::$database_connection !== null) {
+        if (null !== self::$database_connection) {
             return self::$database_connection;
         }
 
@@ -67,10 +62,9 @@ abstract class Database
         string $password,
         string $charset = 'utf8mb4',
         string $collation = 'utf8mb4_unicode_ci'
-    ): array
-    {
-        if ($this->database_info === null) {
-          $this->setRandomDatabase(
+    ): array {
+        if (null === $this->database_info) {
+            $this->setRandomDatabase(
                 $database_prefix_name,
                 $host,
                 $username,
@@ -90,30 +84,30 @@ abstract class Database
         string $password,
         string $charset = 'utf8mb4',
         string $collation = 'utf8mb4_unicode_ci'
-    ): void
-    {
+    ): void {
         // 1. Build mysql connection
-        $this->mysql_db = new mysqli($host, $username, $password);
+        $this->mysql_db = new \mysqli($host, $username, $password);
 
         if ($this->mysql_db->connect_error) {
-            throw new RuntimeException('Connect error (' . $this->mysql_db->connect_errno . ') ' . $this->mysql_db->connect_error . '.');
+            throw new RuntimeException('Connect error ('.$this->mysql_db->connect_errno.') '.$this->mysql_db->connect_error.'.');
         }
 
         // 2. Delete the orphan test databases were created before
         $this->deleteOrphanDatabases($database_prefix_name);
 
         // 3. 生成随机数名称
-        $random_database_name = $database_prefix_name . '_' . Str::random(8);
+        $random_database_name = $database_prefix_name.'_'.Str::random(8);
 
         // 4. create the database
-        $result = $this->mysql_db->query("
-            CREATE DATABASE `$random_database_name`
+        $result = $this->mysql_db->query(
+            "
+            CREATE DATABASE `{$random_database_name}`
             DEFAULT CHARACTER SET {$charset}
             COLLATE {$collation}"
         );
 
         if (!$result) {
-            throw new RuntimeException('Error creating database (' . $database_prefix_name . ')');
+            throw new RuntimeException('Error creating database ('.$database_prefix_name.')');
         }
 
         // 保存数据库信息
@@ -127,26 +121,8 @@ abstract class Database
         $this->mysql_db->close();
     }
 
-    protected function deleteOrphanDatabases(string $database_prefix_name): void
-    {
-        $query_sql = 'SHOW DATABASES LIKE "' . $this->mysql_db->real_escape_string($database_prefix_name) . '%"';
-
-        $results = $this->mysql_db->query($query_sql);
-
-        if ($results->num_rows > 0) {
-            foreach ($results->fetch_array(MYSQLI_ASSOC) as $row) {
-                $this->mysql_db->query('DROP DATABASE ' . $row['Database']);
-            }
-        }
-    }
-
-    protected function setDatabasePrivilege(): void
-    {
-
-    }
-
     /**
-     * 获取 MySQL 数据库信息（静态方法）
+     * 获取 MySQL 数据库信息（静态方法）.
      *
      * @return array{name: string, host: string, username: string, password: string, database: string}
      */
@@ -163,5 +139,19 @@ abstract class Database
             'password' => $instance->database_info['password'],
         ];
     }
-}
 
+    protected function deleteOrphanDatabases(string $database_prefix_name): void
+    {
+        $query_sql = 'SHOW DATABASES LIKE "'.$this->mysql_db->real_escape_string($database_prefix_name).'%"';
+
+        $results = $this->mysql_db->query($query_sql);
+
+        if ($results->num_rows > 0) {
+            foreach ($results->fetch_array(MYSQLI_ASSOC) as $row) {
+                $this->mysql_db->query('DROP DATABASE '.$row['Database']);
+            }
+        }
+    }
+
+    protected function setDatabasePrivilege(): void {}
+}

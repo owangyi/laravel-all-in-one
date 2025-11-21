@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CastController;
 use App\Http\Controllers\ReportDownloadController;
+use App\Http\Controllers\ValidationController;
 use App\Models\Cast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,10 +50,9 @@ Route::get('/performance/sleep', function () {
     return response()->json(['sleeping' => 5]);
 });
 
-
 // Resource Controller
 
 Route::apiResource('casts', CastController::class);
-Route::apiResource('validations', \App\Http\Controllers\ValidationController::class);
+Route::apiResource('validations', ValidationController::class);
 
 Route::apiResource('report.downloads', ReportDownloadController::class)->only(['index']);

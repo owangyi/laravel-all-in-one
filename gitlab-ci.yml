@@ -33,7 +33,7 @@ workflow:
 # Example 1: Public image
 # image: entners/php-fpm:local-1.0
 
-image: entners/php-fpm:local-1.0
+image: owangyi/php-8.4-cli-for-runner
 
 # Required: Must
 # Meaning:  List of stages for jobs, and their order of execution
@@ -45,6 +45,7 @@ image: entners/php-fpm:local-1.0
 stages:
   - prepare
   - lint
+  - check
   - test
   - deploy
 

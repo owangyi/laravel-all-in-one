@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
     use ReseedsTestDatabase;
 
     // Tables whose preparing to be seeded, when null no reseed, when empty array reseed all tables.
-    protected static array|null $tables_to_reseed = null;
+    protected static ?array $tables_to_reseed = null;
 
     protected function setUp(): void
     {
@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
 
         // You can configure something in advance here
 
-        echo "You can configure something in advance here";
+        echo 'You can configure something in advance here';
 
         if (boolval(env('CI'))) {
             echo "It's running in CI";
@@ -38,7 +38,7 @@ abstract class TestCase extends BaseTestCase
     {
         $test_date = env('TEST_DATE');
 
-        if ($test_date !== null && $test_date !== '') {
+        if (null !== $test_date && '' !== $test_date) {
             if (class_exists(Carbon::class)) {
                 Carbon::setTestNow($test_date);
             }

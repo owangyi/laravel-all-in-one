@@ -8,8 +8,8 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class BaseFormRequest extends FormRequest
 {
-    protected function failedValidation(Validator $validator):never
+    protected function failedValidation(Validator $validator): never
     {
-        throw new UnProcessableEntityHttpException($validator->errors()->first());
+        throw new UnprocessableEntityHttpException($validator->errors()->first());
     }
 }

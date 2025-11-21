@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\ReportDownloaded;
 use App\Models\Cast;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -15,7 +14,8 @@ class ReportDownloadController extends Controller
         $casts = Cast::query()
             ->select(['id', 'is_admin', 'json', 'created_at', 'updated_at'])
             ->orderBy('id')
-            ->get();
+            ->get()
+        ;
 
         $fileName = sprintf('casts-%s.csv', now()->format('Ymd_His'));
 
