@@ -24,7 +24,7 @@ Route::get('/', function () {
 
 // Error Handling
 Route::get('/errors', function () {
-    throw_if(true, new Exception('Trigger errors manually.'));
+    throw_if(true, new Exception('Trigger error manually for sentry testing.'));
 });
 
 // Model Cast
